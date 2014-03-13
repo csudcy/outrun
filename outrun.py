@@ -57,46 +57,55 @@ def solve_graph(graph):
     #route overall
     return max(previous_totals)
 
-def check_all():
-    print solve_graph(load_graph('./graphs/0.txt'))
-    print solve_graph(load_graph('./graphs/1.txt'))
-    print solve_graph(load_graph('./graphs/2.txt'))
-    print solve_graph(load_graph('./graphs/3.txt'))
-    print solve_graph(load_graph('./graphs/4.txt'))
-    print solve_graph(load_graph('./graphs/5.txt'))
-    print solve_graph(load_graph('./graphs/6.txt'))
-    print solve_graph(load_graph('./graphs/7.txt'))
-    print solve_graph(load_graph('./graphs/8.txt'))
-    print solve_graph(load_graph('./graphs/9.txt'))
+GRAPHS = [
+    load_graph('./graphs/0.txt'),
+    load_graph('./graphs/1.txt'),
+    load_graph('./graphs/2.txt'),
+    load_graph('./graphs/3.txt'),
+    load_graph('./graphs/4.txt'),
+    load_graph('./graphs/5.txt'),
+    load_graph('./graphs/6.txt'),
+    load_graph('./graphs/7.txt'),
+    load_graph('./graphs/8.txt'),
+    load_graph('./graphs/9.txt'),
+]
 
-def time_test():
-    graphs = [
-        load_graph('./graphs/0.txt'),
-        load_graph('./graphs/1.txt'),
-        load_graph('./graphs/2.txt'),
-        load_graph('./graphs/3.txt'),
-        load_graph('./graphs/4.txt'),
-        load_graph('./graphs/5.txt'),
-        load_graph('./graphs/6.txt'),
-        load_graph('./graphs/7.txt'),
-        load_graph('./graphs/8.txt'),
-        load_graph('./graphs/9.txt'),
-    ]
+def check_all():
+    results = []
+    for graph in GRAPHS:
+        results.append(solve_graph(graph))
+    return results
+
+def test_time(outer_count=5, inner_count=300):
     import time
-    diff_times = []
-    for outer in xrange(5):
+    print '\n\nTook (time.time):\n'
+    for outer in xrange(outer_count):
         start_time = time.time()
-        for inner in xrange(300):
-            if inner % 100 == 0:
-                print '%s. %s...' % (outer, inner)
-            for g in graphs:
-                solve_graph(g)
+        for inner in xrange(inner_count):
+            check_all()
         end_time = time.time()
         diff_time = end_time - start_time
-        diff_times.append(diff_time)
-    print '\n\nTook:\n'
-    for diff_time in diff_times:
         print '%.2fs' % diff_time
 
-#check_all()
-time_test()
+def test_clock(outer_count=5, inner_count=300):
+    import time
+    print '\n\nTook (time.clock):\n'
+    for outer in xrange(outer_count):
+        start_time = time.clock()
+        for inner in xrange(inner_count):
+            check_all()
+        end_time = time.clock()
+        diff_time = end_time - start_time
+        print '%.2fs' % diff_time
+
+def test_timeit(outer_count=5, inner_count=300):
+    import timeit
+    print '\n\nTook (timeit):\n'
+    for outer in xrange(outer_count):
+        diff_time = timeit.timeit(check_all, number=inner_count)
+        print '%.2fs' % diff_time
+
+#print check_all()
+test_time()
+test_clock()
+test_timeit()
